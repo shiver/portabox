@@ -1,0 +1,42 @@
+---
+- name: Portable, ephemeral, minimal development box.
+  hosts: all
+  sudo: true
+
+  tasks:
+
+    - apt: pkg=aptitude state=present
+
+    - apt: upgrade=safe
+
+    - name: Install base packages
+      apt: pkg={{item}} state=present update_cache=yes cache_valid_time=604800
+      with_items:
+          - git
+          - subversion
+          - mercurial
+          - vim
+          - rdesktop
+          - openvpn
+          - python-dev
+          - gimp
+          - sqlite
+          - postgresql
+          - libpq-dev
+          - imagemagick
+          - cifs-utils
+          - xorg
+
+    - name: Virtualbox guest additions
+      apt: pkg={{item}} state=present
+      with_items:
+          - virtualbox-guest-dkms
+          - virtualbox-guest-x11
+          - virtualbox-guest-utils
+
+    - apt_repository: repo='deb http://debian.sur5r.net/i3/ trusty universe' state=present
+    - apt: update_cache=yes
+    - apt: name=sur5r-keyring force=yes
+    - apt: update_cache=yes
+    - apt: name=i3
+
