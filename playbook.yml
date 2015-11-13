@@ -40,3 +40,7 @@
     - apt: update_cache=yes
     - apt: name=i3
 
+    - git: repo=https://github.com/VundleVim/Vundle.vim.git
+           dest=/home/vagrant/.vim/bundle/Vundle.vim
+
+    - shell: vim +PluginInstall +qall
