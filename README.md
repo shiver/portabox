@@ -3,6 +3,8 @@ Portabox
 
 Portable, ephemeral, minimal development desktop.
 
+**Disclaimer:** This is primarily intended for personal use and likely a constant work-in-progress.
+
 Requirements
 ------------
 
