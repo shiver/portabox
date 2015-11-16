@@ -1,11 +1,12 @@
 Vagrant.configure(2) do |config|
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+
     config.vm.define "portabox" do |portabox|
+        portabox.vm.hostname = "portabox"
         portabox.vm.box = "ubuntu/trusty64"
         portabox.vm.network "private_network", ip: "192.168.33.10"
-
-        portabox.vm.hostname = "portabox"
-        portabox.hostmanager.enabled = true
-        portabox.hostmanager.manage_host = true
+        portabox.vm.synced_folder File.expand_path("~"), "/home/vagrant/host"
 
         portabox.vm.provider "virtualbox" do |provider|
             provider.name = "portabox"

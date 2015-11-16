@@ -3,6 +3,8 @@ Portabox
 
 Portable, ephemeral, minimal development desktop.
 
+**Disclaimer:** This is primarily intended for personal use and likely a constant work-in-progress.
+
 Requirements
 ------------
 
@@ -10,7 +12,7 @@ Requirements
 * virtualbox
 
 Vagrant Plugins:
-* hostmanager
+* vagrant-hostmanager
 * vagrant-guest_ansible
 
 Installation
@@ -18,7 +20,7 @@ Installation
 
 Install the required Vagrant plugins:
 ```
-$ vagrant plugin install hostmanager vagrant-guest_ansible
+$ vagrant plugin install vagrant-hostmanager vagrant-guest_ansible
 ```
 
 Provision the virtual machine:

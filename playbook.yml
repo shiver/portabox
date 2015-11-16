@@ -26,6 +26,11 @@
           - imagemagick
           - cifs-utils
           - xorg
+          - zsh
+          - encfs
+          - chromium-browser
+          - lightdm
+          - unity-greeter
 
     - name: Virtualbox guest additions
       apt: pkg={{item}} state=present
@@ -40,7 +45,12 @@
     - apt: update_cache=yes
     - apt: name=i3
 
-    - git: repo=https://github.com/VundleVim/Vundle.vim.git
-           dest=/home/vagrant/.vim/bundle/Vundle.vim
+    - name: Install Vundle
+      git: repo=https://github.com/VundleVim/Vundle.vim.git
+           dest=~/.vim/bundle/Vundle.vim
+      sudo: yes
+      sudo_user: vagrant
 
-    - shell: vim +PluginInstall +qall
+    - shell: echo "[Seat:*]\nuser-session=i3" > /etc/lightdm/lightdm.conf
+
+    - service: name=lightdm state=restarted
