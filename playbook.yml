@@ -7,7 +7,7 @@
 
     - apt: pkg=aptitude state=present
 
-    - apt: upgrade=safe
+#    - apt: upgrade=safe
 
     - name: Install base packages
       apt: pkg={{item}} state=present update_cache=yes cache_valid_time=604800
@@ -31,6 +31,7 @@
           - chromium-browser
           - lightdm
           - unity-greeter
+          - rxvt-unicode-256color
 
     - name: Virtualbox guest additions
       apt: pkg={{item}} state=present
@@ -43,19 +44,37 @@
       apt_repository: repo='deb http://debian.sur5r.net/i3/ trusty universe' state=present
 
     - name: Add PPA for latest version of tmux
-      apt_repository: repo='ppa:pi-rho/dev'
+      apt_repository: repo='ppa:pi-rho/dev' state=present
+    - name: Latest weechat repo
+      apt_repository: repo='deb https://weechat.org/ubuntu trusty main' state=present
 
     - apt: update_cache=yes
 
-    - name: Install latest tmux
-      apt: name=tmux-next
+    - apt: name=sur5r-keyring force=yes
+    - apt_key: keyserver=keys.gnupg.net id=11E9DE8848F2B65222AA75B8D1820DB22A11534E
+
+    - apt: update_cache=yes
+
+    - name: Install custom repo packages
+      apt: pkg={{item}} state=present update_cache=yes cache_valid_time=604800
+      with_items:
+          - tmux-next
+          - i3
+          - weechat-curses
+          - weechat-plugins
 
     - name: Create link so that tmux plugin manager will work
       file: src=/usr/bin/tmux-next dest=/usr/local/bin/tmux state=link
+   
+    - name: Make sure a config file exists, even if blank
+      file: path=~/.tmux.conf state=touch
+      sudo: yes
+      sudo_user: vagrant
 
-    - apt: name=sur5r-keyring force=yes
-    - apt: update_cache=yes
-    - apt: name=i3
+    - name: Create link for tmux config
+      file: src=~/.tmux.conf dest=~/.tmux-next.conf state=link
+      sudo: yes
+      sudo_user: vagrant
 
     - name: Install Vundle
       git: repo=https://github.com/VundleVim/Vundle.vim.git
@@ -68,8 +87,21 @@
       sudo: yes
       sudo_user: vagrant
 
+    - file: path=~/.fonts state=directory
+      sudo: yes
+      sudo_user: vagrant
+
+    - shell: curl http://www.fial.com/~scott/tamsyn-font/download/tamsyn-font-1.11.tar.gz | tar xz -C ~/.fonts
+      sudo: yes
+      sudo_user: vagrant
+
+    - name: Update font cache
+      command: fc-cache -f 
+      sudo: yes
+      sudo_user: vagrant
+
     - shell: echo "[Seat:*]\nuser-session=i3" > /etc/lightdm/lightdm.conf
       args:
         creates: /etc/lightdm/lightdm.conf
 
-    - service: name=lightdm state=restarted
+    # - service: name=lightdm state=reloaded
