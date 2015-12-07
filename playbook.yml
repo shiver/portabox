@@ -39,8 +39,20 @@
           - virtualbox-guest-x11
           - virtualbox-guest-utils
 
-    - apt_repository: repo='deb http://debian.sur5r.net/i3/ trusty universe' state=present
+    - name: Add repo for latest version of i3 window manager
+      apt_repository: repo='deb http://debian.sur5r.net/i3/ trusty universe' state=present
+
+    - name: Add PPA for latest version of tmux
+      apt_repository: repo='ppa:pi-rho/dev'
+
     - apt: update_cache=yes
+
+    - name: Install latest tmux
+      apt: name=tmux-next
+
+    - name: Create link so that tmux plugin manager will work
+      file: src=/usr/bin/tmux-next dest=/usr/local/bin/tmux state=link
+
     - apt: name=sur5r-keyring force=yes
     - apt: update_cache=yes
     - apt: name=i3
@@ -51,6 +63,13 @@
       sudo: yes
       sudo_user: vagrant
 
+    - name: Install tmux plugin manager
+      git: repo=https://github.com/tmux-plugins/tpm dest=~/.tmux/plugins/tpm
+      sudo: yes
+      sudo_user: vagrant
+
     - shell: echo "[Seat:*]\nuser-session=i3" > /etc/lightdm/lightdm.conf
+      args:
+        creates: /etc/lightdm/lightdm.conf
 
     - service: name=lightdm state=restarted
